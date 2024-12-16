@@ -1,36 +1,35 @@
-# Example file showing a circle moving on screen
 import pygame
-
+from pytmx import load_pygame
+from script.TiledMap import TiledMap
+from script.Player import Player
 # pygame setup
+
+
 pygame.init()
-screen = pygame.display.set_mode((1280, 720))
+
+screen = pygame.display.set_mode((1280, 640))
+Map = TiledMap("./map/SnakeBattle.tmx")
+Player = Player()
 clock = pygame.time.Clock()
 running = True
 dt = 0
 
-player_pos = pygame.Vector2(screen.get_width() / 2, screen.get_height() / 2)
 
+tmxdata = load_pygame("./map/SnakeBattle.tmx")
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
 
-    screen.fill("purple")
-
-    pygame.draw.circle(screen, "red", player_pos, 40)
+    screen.fill((0, 0, 0))
 
     keys = pygame.key.get_pressed()
-    if keys[pygame.K_w]:
-        player_pos.y -= 300 * dt
-    if keys[pygame.K_s]:
-        player_pos.y += 300 * dt
-    if keys[pygame.K_a]:
-        player_pos.x -= 300 * dt
-    if keys[pygame.K_d]:
-        player_pos.x += 300 * dt
+    
+    Map.draw_map(screen)
+    Player.Move(keys,dt)
+    pygame.draw.circle(screen, "red", (Player.x,Player.y), 40)
 
     pygame.display.flip()
-
     dt = clock.tick(60) / 1000
 
 pygame.quit()
