@@ -14,21 +14,16 @@ clock = pygame.time.Clock()
 running = True
 dt = 0
 
-
-tmxdata = load_pygame("./map/SnakeBattle.tmx")
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-
-    screen.fill((0, 0, 0))
-
     keys = pygame.key.get_pressed()
     
     Map.draw_map(screen)
-    Player.Move(keys,dt)
-    pygame.draw.circle(screen, "red", (Player.x,Player.y), 40)
-
+    Player.update(keys,dt,screen,Map)
+    # print(Map.tmx_data.get_tile_properties(Player.x/128,Player.y/128,1))
+    
     pygame.display.flip()
     dt = clock.tick(60) / 1000
 
