@@ -22,8 +22,7 @@ while running:
     
     Map.draw_map(screen)
     Player.update(keys,dt,screen,Map)
-    # print(Map.tmx_data.get_tile_properties(Player.x/128,Player.y/128,1))
-    
+        
     pygame.display.flip()
     dt = clock.tick(60) / 1000
 
