@@ -19,7 +19,7 @@ class Player:
         
         if self.isjumping :
             # self.y -= self.velocityY
-            self.velocityY -= self.gravity
+            self.velocityY -= self.gravity *dt
             if self.velocityY < -self.jump_height:
                 self.isjumping = False
                 self.velocityY = self.jump_height
