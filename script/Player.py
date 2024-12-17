@@ -19,7 +19,8 @@ class Player:
         
         if self.isjumping :
             # self.y -= self.velocityY
-            self.velocityY -= self.gravity *dt
+            print(dt)
+            self.velocityY -= self.gravity
             if self.velocityY < -self.jump_height:
                 self.isjumping = False
                 self.velocityY = self.jump_height
@@ -32,7 +33,6 @@ class Player:
             self.isjumping = True
             # self.jumping_time = 15
     def update(self,keys,dt,screen,Map):
-        print(self.jump)
         self.velocityX = 0
         self.velocityY = 0
         self.Move(keys,dt)
