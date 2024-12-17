@@ -24,7 +24,7 @@ class Player:
             if self.velocityY < -self.jump_height:
                 self.isjumping = False
                 self.velocityY = self.jump_height
-        if keys[pygame.K_a]:
+        if keys[pygame.K_q]:
             self.velocityX -= self.speed * dt
         if keys[pygame.K_d]:
             self.velocityX += self.speed * dt
