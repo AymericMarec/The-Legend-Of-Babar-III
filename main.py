@@ -19,9 +19,9 @@ while running:
         if event.type == pygame.QUIT:
             running = False
     keys = pygame.key.get_pressed()
-    
+    buttons = pygame.mouse.get_pressed()
     Map.draw_map(screen)
-    Player.update(keys,dt,screen,Map)
+    Player.update(keys,dt,screen,Map,buttons)
         
     pygame.display.flip()
     dt = clock.tick(60) / 1000

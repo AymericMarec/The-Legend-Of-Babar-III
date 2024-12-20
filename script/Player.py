@@ -4,23 +4,78 @@ import time
 class Player:
     def __init__(self):
         self.x = 300        
-        self.y = 200          
-        self.gravity = 30      
-        self.speed = 300       
+        self.y = 200   
+        self.height = 20
+
+        self.gravity = 30
+        self.max_fall_speed = 300    
+        self.speed = 300  
+
         self.velocityX = 0  
         self.velocityY = 0
+
         self.MaxJump = 2            
         self.jump = self.MaxJump    
-        self.jumpForce = 15         
-        self.isfacing = "RIGHT"     
+        self.jumpForce = 15    
+
+        self.isFacing = "RIGHT"     
         self.dashspeed = 3          
         self.dashing = False
         self.dashingtime = 10
         self.dashcooldown = 0
-        self.height = 20
-        self.max_fall_speed = 300
 
-    def Move(self,keys,dt):  
+        self.attackFacing = "RIGHT"
+        self.attackX = 0
+        self.attackY = 0
+        self.isAttacking = False
+        self.attack_cooldown = 0
+        self.attack_range = 80
+        self.attack_width = 100
+        self.attack_timer = 0
+        self.attack_duration = 10
+        
+
+
+    def update(self,keys,dt,screen,Map,button):
+        '''Function called every frame in the game'''
+        self.Fall(dt,Map)
+        self.Move(keys,dt,button)
+        self.Collision_Detection(Map)
+        self.Attack(screen)
+        if self.attack_cooldown > 0:
+            self.attack_cooldown -= 1
+
+        self.x += self.velocityX
+        self.y -= self.velocityY
+        self.Display(screen)
+
+    def Attack(self,screen):
+        if self.isAttacking:
+            
+            if self.attackFacing == "RIGHT":
+                attack_rect = pygame.Rect(
+                    self.attackX + self.height // 2,
+                    self.attackY - self.attack_width//2 ,
+                    self.attack_range,
+                    self.attack_width,
+                )
+            else: 
+                attack_rect = pygame.Rect(
+                    self.attackX - self.attack_range - self.height // 2,
+                    self.attackY - self.attack_width // 2,
+                    self.attack_range,
+                    self.attack_width,
+                )
+            
+
+            pygame.draw.rect(screen, "yellow", attack_rect, 1)
+
+            self.attack_timer -= 1
+            if self.attack_timer <= 0:
+                self.isAttacking = False
+
+
+    def Move(self,keys,dt,button):  
         '''Gestion of the player Movement'''
         if self.dashing :
             self.Dash(dt)
@@ -33,11 +88,11 @@ class Player:
 
         if keys[pygame.K_q]:
             # Moving Left
-            self.isfacing = "LEFT"
+            self.isFacing = "LEFT"
             self.velocityX = -self.speed * dt
         elif keys[pygame.K_d]:
             # Moving Right
-            self.isfacing = "RIGHT"
+            self.isFacing = "RIGHT"
             self.velocityX = self.speed * dt
         elif keys[pygame.K_m]:
             # dashing 
@@ -57,21 +112,17 @@ class Player:
                 self.velocityY = self.jumpForce/1.5
             #remove 1 player jump
             self.jump-=1
-        
-
-
-    def update(self,keys,dt,screen,Map):
-        '''Function called every frame in the game'''
-        self.Fall(dt,Map)
-        self.Move(keys,dt)
-        self.Collision_Detection(Map)
-        
-        self.x += self.velocityX
-        self.y -= self.velocityY
-        self.Display(screen)
+        if button[0] and self.attack_cooldown <=0:
+            print("coucou")
+            self.attackFacing = self.isFacing
+            self.attackX = self.x
+            self.attackY = self.y
+            self.isAttacking = True
+            self.attack_timer = self.attack_duration
+            self.attack_cooldown = 30
 
     def Dash(self, dt):
-        if self.isfacing == "LEFT" :
+        if self.isFacing == "LEFT" :
             self.velocityX -= self.speed * dt * self.dashspeed
         else :
             self.velocityX += self.speed * dt * self.dashspeed
