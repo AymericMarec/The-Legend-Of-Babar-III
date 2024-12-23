@@ -37,8 +37,8 @@ class Boss:
         boss_color = (255, 0, 0)
         pygame.draw.rect(screen, boss_color, (self.x, self.y, self.width, self.height))
         
-        life_bar_width = self.width
+        life_bar_width = 500
         life_ratio = self.life / self.max_life
-        pygame.draw.rect(screen, (0, 0, 0), (self.x, self.y - 10, life_bar_width, 5)) 
-        pygame.draw.rect(screen, (0, 255, 0), (self.x, self.y - 10, life_bar_width * life_ratio, 5))  
+        pygame.draw.rect(screen, (0, 0, 0), (10, 10, life_bar_width, 25)) 
+        pygame.draw.rect(screen, (0, 255, 0), (10, 10, life_bar_width * life_ratio, 25))  
 
