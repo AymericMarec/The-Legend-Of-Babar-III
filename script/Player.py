@@ -2,7 +2,9 @@ import pygame
 import time
 
 class Player:
-    def __init__(self):
+    def __init__(self, screen):
+        self.screen = screen
+
         self.x = 300        
         self.y = 200   
         self.height = 20
@@ -21,7 +23,7 @@ class Player:
         self.isFacing = "RIGHT"     
         self.dashspeed = 3          
         self.dashing = False
-        self.dashingtime = 10
+        self.dashingtime = 5
         self.dashcooldown = 0
 
         self.attackFacing = "RIGHT"
@@ -74,16 +76,17 @@ class Player:
             if self.attack_timer <= 0:
                 self.isAttacking = False
 
-
-    def Move(self,keys,dt,button):  
+    def Move(self, keys, dt, button):  
         '''Gestion of the player Movement'''
-        if self.dashing :
+        if self.dashing:
             self.Dash(dt)
             self.dashingtime -= 1
-            if self.dashingtime <= 0 :
+            if self.dashingtime <= 0:
                 self.dashing = False
-                self.dashingtime = 10
-        elif self.dashcooldown != 0 : 
+                self.dashingtime = 5
+            return  # Ne pas traiter les mouvements normaux pendant le dash
+
+        if self.dashcooldown > 0:
             self.dashcooldown -= 1
 
         if keys[pygame.K_q]:
@@ -94,32 +97,33 @@ class Player:
             # Moving Right
             self.isFacing = "RIGHT"
             self.velocityX = self.speed * dt
-        elif keys[pygame.K_m]:
-            # dashing 
+        else:
+            # if the player doesn't press any key, stop movement
+            self.velocityX = 0
+
+        if keys[pygame.K_m]:
+            # Dashing
             if not self.dashing and self.dashcooldown == 0:
                 self.dashing = True
                 self.dashcooldown = 15
-        else:
-            # if the player don't press any key 
-            # stop to movement 
-            self.velocityX = 0
 
         if keys[pygame.K_SPACE] and self.jump >= 1 and not self.velocityY > 0:
-            if(self.jump == self.MaxJump):
+            if self.jump == self.MaxJump:
                 self.velocityY = self.jumpForce
             else:
-                #double / triple jump less efficient
-                self.velocityY = self.jumpForce/1.5
-            #remove 1 player jump
-            self.jump-=1
-        if button[0] and self.attack_cooldown <=0:
-            print("coucou")
+                # Double / triple jump less efficient
+                self.velocityY = self.jumpForce / 1.5
+            # Remove 1 player jump
+            self.jump -= 1
+
+        if button[0] and self.attack_cooldown <= 0:
             self.attackFacing = self.isFacing
             self.attackX = self.x
             self.attackY = self.y
             self.isAttacking = True
             self.attack_timer = self.attack_duration
             self.attack_cooldown = 30
+
 
     def Dash(self, dt):
         if self.isFacing == "LEFT" :

@@ -2,6 +2,7 @@ import pygame
 from pytmx import load_pygame
 from script.TiledMap import TiledMap
 from script.Player import Player
+from script.Boss import Boss
 # pygame setup
 
 
@@ -9,7 +10,8 @@ pygame.init()
 
 screen = pygame.display.set_mode((1280, 640))
 Map = TiledMap("./map/SnakeBattle.tmx")
-Player = Player()
+Player = Player(screen)
+Boss = Boss()
 clock = pygame.time.Clock()
 running = True
 dt = 0
@@ -22,6 +24,7 @@ while running:
     buttons = pygame.mouse.get_pressed()
     Map.draw_map(screen)
     Player.update(keys,dt,screen,Map,buttons)
+    Boss.update(Player)
         
     pygame.display.flip()
     dt = clock.tick(60) / 1000
