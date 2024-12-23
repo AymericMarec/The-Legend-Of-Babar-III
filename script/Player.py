@@ -2,9 +2,7 @@ import pygame
 import time
 
 class Player:
-    def __init__(self, screen):
-        self.screen = screen
-
+    def __init__(self):
         self.x = 300        
         self.y = 200   
         self.height = 20
