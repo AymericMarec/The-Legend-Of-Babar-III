@@ -23,7 +23,7 @@ while running:
     keys = pygame.key.get_pressed()
     buttons = pygame.mouse.get_pressed()
     Map.draw_map(screen)
-    Player.update(keys,dt,screen,Map,buttons)
+    Player.update(keys,dt,screen,Map,buttons,Boss)
     Boss.update(Player, screen)
         
     pygame.display.flip()

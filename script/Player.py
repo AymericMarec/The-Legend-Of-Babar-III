@@ -27,6 +27,7 @@ class Player:
         self.attackFacing = "RIGHT"
         self.attackX = 0
         self.attackY = 0
+        self.Damaged = False
         self.isAttacking = False
         self.attack_cooldown = 0
         self.attack_range = 80
@@ -36,12 +37,12 @@ class Player:
         
 
 
-    def update(self,keys,dt,screen,Map,button):
+    def update(self,keys,dt,screen,Map,button,boss):
         '''Function called every frame in the game'''
         self.Fall(dt,Map)
         self.Move(keys,dt,button)
         self.Collision_Detection(Map)
-        self.Attack(screen)
+        self.Attack(screen,boss)
         if self.attack_cooldown > 0:
             self.attack_cooldown -= 1
 
@@ -49,7 +50,7 @@ class Player:
         self.y -= self.velocityY
         self.Display(screen)
 
-    def Attack(self,screen):
+    def Attack(self,screen,boss):
         if self.isAttacking:
             
             if self.attackFacing == "RIGHT":
@@ -66,7 +67,9 @@ class Player:
                     self.attack_range,
                     self.attack_width,
                 )
-            
+            if attack_rect.colliderect(boss.body) and not self.Damaged:
+                self.Damaged = True
+                boss.take_damage(1)
 
             pygame.draw.rect(screen, "yellow", attack_rect, 1)
 
@@ -121,6 +124,7 @@ class Player:
             self.isAttacking = True
             self.attack_timer = self.attack_duration
             self.attack_cooldown = 30
+            self.Damaged = False
 
 
     def Dash(self, dt):

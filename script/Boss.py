@@ -9,7 +9,8 @@ class Boss:
         self.speed = 300            
         self.width = 50              
         self.height = 50
-        self.is_colliding = False              
+        self.is_colliding = False
+        self.body = None              
 
     def update(self, player, screen):
         self.check_collision(player)
@@ -29,13 +30,14 @@ class Boss:
 
 
     def take_damage(self, amount):
+        print(self.life)
         self.life -= amount
         if self.life < 0:
             self.life = 0
 
     def display(self, screen):
         boss_color = (255, 0, 0)
-        pygame.draw.rect(screen, boss_color, (self.x, self.y, self.width, self.height))
+        self.body = pygame.draw.rect(screen, boss_color, (self.x, self.y, self.width, self.height))
         
         life_bar_width = screen.get_width() * 0.8
         margin =  (screen.get_width() - (screen.get_width() * 0.8))/2
