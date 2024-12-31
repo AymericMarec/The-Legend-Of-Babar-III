@@ -60,13 +60,20 @@ class Player:
                     self.attack_range,
                     self.attack_width,
                 )
-            else: 
+            elif self.attackFacing == "LEFT": 
                 attack_rect = pygame.Rect(
                     self.attackX - self.attack_range - self.height // 2,
                     self.attackY - self.attack_width // 2,
                     self.attack_range,
                     self.attack_width,
                 )
+            elif self.attackFacing == "TOP":
+                attack_rect = pygame.Rect(
+                    self.attackX - self.attack_range + self.height,
+                    self.attackY - self.attack_width + self.height // 2,
+                    self.attack_width,
+                    self.attack_range,
+                ) 
             if attack_rect.colliderect(boss.body) and not self.Damaged:
                 self.Damaged = True
                 boss.take_damage(1)
@@ -118,7 +125,10 @@ class Player:
             self.jump -= 1
 
         if button[0] and self.attack_cooldown <= 0:
-            self.attackFacing = self.isFacing
+            if keys[pygame.K_z]:    # up attack
+                self.attackFacing = "TOP"
+            else:
+                self.attackFacing = self.isFacing
             self.attackX = self.x
             self.attackY = self.y
             self.isAttacking = True

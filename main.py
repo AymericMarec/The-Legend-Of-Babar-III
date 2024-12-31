@@ -23,8 +23,9 @@ while running:
     keys = pygame.key.get_pressed()
     buttons = pygame.mouse.get_pressed()
     Map.draw_map(screen)
+    Boss.update(Player,screen,dt)
     Player.update(keys,dt,screen,Map,buttons,Boss)
-    Boss.update(Player, screen)
+    
         
     pygame.display.flip()
     dt = clock.tick(60) / 1000
