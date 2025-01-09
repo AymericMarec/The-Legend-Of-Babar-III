@@ -35,7 +35,8 @@ class Player:
         self.attack_timer = 0
         self.attack_duration = 10
         
-
+        self.life = 0
+        self.is_colliding = False
 
     def update(self,keys,dt,screen,Map,button,boss):
         '''Function called every frame in the game'''
@@ -43,6 +44,7 @@ class Player:
         self.Move(keys,dt,button)
         self.Collision_Detection(Map)
         self.Attack(screen,boss)
+        self.check_collision(boss)
         if self.attack_cooldown > 0:
             self.attack_cooldown -= 1
 
@@ -171,7 +173,28 @@ class Player:
             if Itile_x == Tile_x and Itile_y == Tile_y:
                 #if the tile is not empty 
                 return gid != 0
+    def check_collision(self, boss):
+        '''check collision between boss and apple'''
+        player_rect = pygame.Rect(self.x - self.height // 2, self.y - self.height // 2, self.height, self.height)
+        boss_rect = pygame.Rect(boss.x, boss.y, boss.width, boss.height)
+        #   Boss Collision
+        if boss_rect.colliderect(player_rect):
+            if self.is_colliding == False :
+                self.take_damage(1)
+                self.is_colliding = True
+        else :
+            self.is_colliding = False
+        #   Apple Collision
+        for apple in boss.Apple:
+            apple_rect = pygame.Rect(apple.x,apple.y, apple.height,apple.height)
+            if apple_rect.colliderect(player_rect) and apple.damaged == False:
+                self.take_damage(1)
+                apple.damaged = True
 
+    def take_damage(self, amount):
+        self.life -= amount
+        if self.life < 0:
+            self.life = 0
 
     def Display(self,screen):
         '''Display player'''

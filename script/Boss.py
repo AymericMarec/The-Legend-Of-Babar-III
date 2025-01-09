@@ -1,6 +1,6 @@
 import pygame
 import random
-
+from script.Apple import Apple
 class Boss:
     def __init__(self):
         self.x = 400                
@@ -16,14 +16,15 @@ class Boss:
         self.velocityY = 0
         self.attack_cooldown = 0
         self.throwing_apple = 0
-
+        self.Apple = []
 
     def update(self,player, screen,dt):
         self.attack(dt,player)
         self.display(screen)
-        self.move(dt)
+        self.move(dt,player)
+        self.MoveApple(screen)
 
-    def move(self,dt):
+    def move(self,dt,player):
         self.x += self.velocityX * dt
         self.y += self.velocityY * dt
         if(self.throwing_apple > 0):
@@ -31,8 +32,8 @@ class Boss:
             chance_to_throw = 45
             if(random.randint(0,dtmax*chance_to_throw) < dtmax):
                 self.throwing_apple-=1
-                #send apple
-                print("attaaaack")
+                apple = Apple(self.x,self.y,player)
+                self.Apple.append(apple)
 
 
     def attack(self,dt,player):
@@ -97,6 +98,13 @@ class Boss:
         life_ratio = self.life / self.max_life
         pygame.draw.rect(screen, (0, 0, 0), (margin, screen.get_height() - 45, life_bar_width, 25)) 
         pygame.draw.rect(screen, (0, 255, 0), (margin, screen.get_height() - 45, life_bar_width * life_ratio, 25))  
+
+
+    def MoveApple(self,screen):
+        for apple in self.Apple:
+            apple.update(screen)
+            if(apple.IsOut() or apple.damaged == True):
+                self.Apple.remove(apple)
 
     # def check_collision(self, player):
     #     boss_rect = pygame.Rect(self.x, self.y, self.width, self.height)
