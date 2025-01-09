@@ -5,7 +5,7 @@ class Player:
     def __init__(self):
         self.x = 300        
         self.y = 200   
-        self.height = 20
+        self.height = 90
 
         self.gravity = 30
         self.max_fall_speed = 300    
@@ -34,7 +34,32 @@ class Player:
         self.attack_width = 100
         self.attack_timer = 0
         self.attack_duration = 10
+
+        self.sprite_width = 70
+        self.sprite_height = 71
+        self.sprite_sheet = pygame.image.load("./Assets/player.png").convert_alpha()
+        self.sprites = self.load_sprites()
+        self.current_sprite = self.sprites["idle"][0]
+        self.sprite_index = 0
         
+
+
+    def load_sprites(self):
+        sprites = {
+            "idle": [],
+            "run": [],
+        }
+        for i in range(3):
+            if i != 1 :  
+                sprites["idle"].append(self.get_sprite(2, i))
+        for i in range(10):
+            sprites["run"].append(self.get_sprite(1, i))
+        return sprites
+        
+    def get_sprite(self, row, col):
+        x = col * self.sprite_width
+        y = row * self.sprite_height
+        return self.sprite_sheet.subsurface(pygame.Rect(x, y, self.sprite_width, self.sprite_height))
 
 
     def update(self,keys,dt,screen,Map,button,boss):
@@ -56,20 +81,20 @@ class Player:
             if self.attackFacing == "RIGHT":
                 attack_rect = pygame.Rect(
                     self.attackX + self.height // 2,
-                    self.attackY - self.attack_width//2 ,
+                    self.attackY - self.attack_width + self.height ,
                     self.attack_range,
                     self.attack_width,
                 )
             elif self.attackFacing == "LEFT": 
                 attack_rect = pygame.Rect(
                     self.attackX - self.attack_range - self.height // 2,
-                    self.attackY - self.attack_width // 2,
+                    self.attackY - self.attack_width + self.height,
                     self.attack_range,
                     self.attack_width,
                 )
             elif self.attackFacing == "TOP":
                 attack_rect = pygame.Rect(
-                    self.attackX - self.attack_range + self.height,
+                    self.attackX - self.attack_range + self.height//2,
                     self.attackY - self.attack_width + self.height // 2,
                     self.attack_width,
                     self.attack_range,
@@ -119,9 +144,7 @@ class Player:
             if self.jump == self.MaxJump:
                 self.velocityY = self.jumpForce
             else:
-                # Double / triple jump less efficient
                 self.velocityY = self.jumpForce / 1.5
-            # Remove 1 player jump
             self.jump -= 1
 
         if button[0] and self.attack_cooldown <= 0:
@@ -152,17 +175,16 @@ class Player:
         else:
             self.velocityY = 0
             self.jump = self.MaxJump
+
     def Collision_Detection(self,Map):
-        '''Stop the player if he cross a plateform , on the side and above him'''
         # check above
-        if(self.is_collision(Map,self.x,self.y-self.height*1.25) and self.velocityY > 0):
+        if(self.is_collision(Map, self.x, self.y + self.height // 2) and self.velocityY > 0):
             self.velocityY=0
         #check on the side
-        if((self.is_collision(Map,self.x-self.height*1.25,self.y) and self.velocityX < 0)or (self.is_collision(Map,self.x+self.height*1.25,self.y) and self.velocityX > 0)):
+        if (self.is_collision(Map, self.x - self.height // 2, self.y) and self.velocityX < 0) or (self.is_collision(Map, self.x + self.height // 2, self.y) and self.velocityX > 0):
             self.velocityX = 0
         
     def is_collision(self,Map,x,y):
-        '''Return True if a plateform is a the coordinate x , y '''
         GroundLayer = Map.Data.get_layer_by_name("Ground")
         # Get coordinate of the tile
         Tile_x = x // Map.tmx_data.tilewidth
@@ -171,9 +193,20 @@ class Player:
             if Itile_x == Tile_x and Itile_y == Tile_y:
                 #if the tile is not empty 
                 return gid != 0
+            
+    def animate(self, action):
+        self.sprite_index += 0.15  # Vitesse de l'animation
+        if self.sprite_index >= len(self.sprites[action]):
+            self.sprite_index = 0
+        self.current_sprite = self.sprites[action][int(self.sprite_index)]
 
 
-    def Display(self,screen):
-        '''Display player'''
-        pygame.draw.circle(screen, "blue", (self.x,self.y), self.height)
+    def Display(self, screen):
+        if self.velocityX != 0:  # Si le joueur se déplace
+            self.animate("run")
+        else:  # Sinon, idle
+            self.animate("idle")
+
+        flipped_sprite = pygame.transform.flip(self.current_sprite, self.isFacing == "LEFT", False)
+        screen.blit(flipped_sprite, (self.x- self.sprite_width//2, self.y + self.sprite_height//2 + 5))
 
