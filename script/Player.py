@@ -27,6 +27,7 @@ class Player:
         self.attackFacing = "RIGHT"
         self.attackX = 0
         self.attackY = 0
+        self.Damaged = False
         self.isAttacking = False
         self.attack_cooldown = 0
         self.attack_range = 80
@@ -36,12 +37,12 @@ class Player:
         
 
 
-    def update(self,keys,dt,screen,Map,button):
+    def update(self,keys,dt,screen,Map,button,boss):
         '''Function called every frame in the game'''
         self.Fall(dt,Map)
         self.Move(keys,dt,button)
         self.Collision_Detection(Map)
-        self.Attack(screen)
+        self.Attack(screen,boss)
         if self.attack_cooldown > 0:
             self.attack_cooldown -= 1
 
@@ -49,7 +50,7 @@ class Player:
         self.y -= self.velocityY
         self.Display(screen)
 
-    def Attack(self,screen):
+    def Attack(self,screen,boss):
         if self.isAttacking:
             
             if self.attackFacing == "RIGHT":
@@ -59,14 +60,23 @@ class Player:
                     self.attack_range,
                     self.attack_width,
                 )
-            else: 
+            elif self.attackFacing == "LEFT": 
                 attack_rect = pygame.Rect(
                     self.attackX - self.attack_range - self.height // 2,
                     self.attackY - self.attack_width // 2,
                     self.attack_range,
                     self.attack_width,
                 )
-            
+            elif self.attackFacing == "TOP":
+                attack_rect = pygame.Rect(
+                    self.attackX - self.attack_range + self.height,
+                    self.attackY - self.attack_width + self.height // 2,
+                    self.attack_width,
+                    self.attack_range,
+                ) 
+            if attack_rect.colliderect(boss.body) and not self.Damaged:
+                self.Damaged = True
+                boss.take_damage(1)
 
             pygame.draw.rect(screen, "yellow", attack_rect, 1)
 
@@ -115,12 +125,16 @@ class Player:
             self.jump -= 1
 
         if button[0] and self.attack_cooldown <= 0:
-            self.attackFacing = self.isFacing
+            if keys[pygame.K_z]:    # up attack
+                self.attackFacing = "TOP"
+            else:
+                self.attackFacing = self.isFacing
             self.attackX = self.x
             self.attackY = self.y
             self.isAttacking = True
             self.attack_timer = self.attack_duration
             self.attack_cooldown = 30
+            self.Damaged = False
 
 
     def Dash(self, dt):
