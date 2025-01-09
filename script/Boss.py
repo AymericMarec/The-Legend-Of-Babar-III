@@ -1,6 +1,6 @@
 import pygame
 import random
-
+from script.Apple import Apple
 class Boss:
     def __init__(self):
         self.x = 400                
@@ -16,7 +16,7 @@ class Boss:
         self.velocityY = 0
         self.attack_cooldown = 0
         self.throwing_apple = 0
-
+        self.Apple = []
         # Charger l'image du boss
         self.original_image = pygame.image.load("./Assets/Terry.png")
         self.original_image = pygame.transform.scale(self.original_image, (self.width, self.height))  # Ajuste la taille si nécessaire
@@ -26,9 +26,10 @@ class Boss:
         self.body = pygame.Rect(self.x, self.y, self.width, self.height)
         self.attack(dt, player)
         self.display(screen)
-        self.move(dt)
+        self.move(dt,player)
+        self.MoveApple(screen)
 
-    def move(self, dt):
+    def move(self,dt,player):
         self.x += self.velocityX * dt
         self.y += self.velocityY * dt
         self.change_orientation() 
@@ -36,10 +37,10 @@ class Boss:
         if self.throwing_apple > 0:
             dtmax = int(dt * 1000)
             chance_to_throw = 45
-            if random.randint(0, dtmax * chance_to_throw) < dtmax:
-                self.throwing_apple -= 1
-                # Envoyer une attaque
-                print("attaaaack")
+            if(random.randint(0,dtmax*chance_to_throw) < dtmax):
+                self.throwing_apple-=1
+                apple = Apple(self.x,self.y,player)
+                self.Apple.append(apple)
 
     def change_orientation(self):
         if self.velocityX > 0: 
@@ -67,10 +68,10 @@ class Boss:
     def MovingAttack(self, player):
         self.speed = 800
         if random.randint(1, 2) == 1:
-            self.y = player.y - 40
+            self.y = player.y + 40
             self.HorizontalMovement()
         else:
-            self.x = player.x
+            self.x = player.x - 15
             self.VerticalMovement()
 
     def ThrowApple(self, player):
@@ -118,15 +119,21 @@ class Boss:
         pygame.draw.rect(screen, (0, 0, 0), (margin, screen.get_height() - 45, life_bar_width, 25), border_radius=10) 
         pygame.draw.rect(screen, (139, 0, 0), (margin, screen.get_height() - 45, life_bar_width * life_ratio, 25), border_radius=10)
 
-    def check_collision(self, player):
-        # Définir un rectangle basé sur l'image pour détecter les collisions
-        boss_rect = pygame.Rect(self.x, self.y, self.image.get_width(), self.image.get_height())
-        player_rect = pygame.Rect(player.x - player.height // 2, player.y - player.height // 2, player.height, player.height)
+
+    def MoveApple(self,screen):
+        for apple in self.Apple:
+            apple.update(screen)
+            if(apple.IsOut() or apple.damaged == True):
+                self.Apple.remove(apple)
+
+    # def check_collision(self, player):
+    #     boss_rect = pygame.Rect(self.x, self.y, self.width, self.height)
+    #     player_rect = pygame.Rect(player.x - player.height // 2, player.y - player.height // 2, player.height, player.height)
         
-        if boss_rect.colliderect(player_rect):
-            if not self.is_colliding:
-                print("touché")
-                self.take_damage(1)
-                self.is_colliding = True
-        else:
-            self.is_colliding = False
+        # if boss_rect.colliderect(player_rect):
+        #     if not self.is_colliding:
+        #         print("touché")
+        #         self.take_damage(1)
+        #         self.is_colliding = True
+        # else:
+        #     self.is_colliding = False
