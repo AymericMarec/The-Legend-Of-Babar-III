@@ -35,7 +35,8 @@ class Player:
         self.attack_timer = 0
         self.attack_duration = 10
 
-        self.life = 0
+        self.maxlife = 2
+        self.life = self.maxlife
         self.is_colliding = False        
         self.sprite_width = 70
         self.sprite_height = 71
@@ -70,7 +71,7 @@ class Player:
         self.Move(keys,dt,button)
         self.Collision_Detection(Map)
         self.Attack(screen,boss)
-        self.check_collision(boss)
+        self.check_collision(boss, screen)
         if self.attack_cooldown > 0:
             self.attack_cooldown -= 1
 
@@ -197,9 +198,10 @@ class Player:
                 #if the tile is not empty 
                 return gid != 0
             
-    def check_collision(self, boss):
+    def check_collision(self, boss, screen):
         '''check collision with boss and apple'''
-        player_rect = pygame.Rect(self.x - self.sprite_height // 2, self.y + self.sprite_height // 2, self.sprite_width, self.sprite_height- 50)
+        player_rect = pygame.Rect(self.x - self.sprite_height // 2, self.y + self.sprite_height - 28, self.sprite_width, self.sprite_height- 50)
+        pygame.draw.rect(screen, "red", player_rect, 1)
 
         boss_rect = pygame.Rect(boss.x, boss.y, boss.width, boss.height)
         #   Boss Collision
@@ -238,4 +240,10 @@ class Player:
 
         flipped_sprite = pygame.transform.flip(self.current_sprite, self.isFacing == "LEFT", False)
         screen.blit(flipped_sprite, (self.x- self.sprite_width//2, self.y + self.sprite_height//2 + 5))
+
+        life_bar_width = 500
+        life_ratio = self.life / self.maxlife
+        print(life_ratio)
+        pygame.draw.rect(screen, (0, 0, 0), (20, 20, life_bar_width, 20), border_radius=5) 
+        pygame.draw.rect(screen, (0, 0, 139), (20, 20, life_bar_width * life_ratio, 20), border_radius=5)
 

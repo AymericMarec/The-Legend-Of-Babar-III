@@ -116,6 +116,7 @@ class Boss:
         life_bar_width = screen.get_width() * 0.7
         margin = (screen.get_width() - life_bar_width) / 2
         life_ratio = self.life / self.max_life
+        print(life_ratio)
         pygame.draw.rect(screen, (0, 0, 0), (margin, screen.get_height() - 45, life_bar_width, 25), border_radius=10) 
         pygame.draw.rect(screen, (139, 0, 0), (margin, screen.get_height() - 45, life_bar_width * life_ratio, 25), border_radius=10)
 
