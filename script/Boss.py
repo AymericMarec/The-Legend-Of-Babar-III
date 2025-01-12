@@ -3,8 +3,8 @@ import random
 from script.Apple import Apple
 class Boss:
     def __init__(self):
-        self.x = 400                
-        self.y = 200                   
+        self.x = -400                
+        self.y = 100                   
         self.max_life = 10      
         self.life = self.max_life         
         self.speed = 800            
@@ -14,7 +14,7 @@ class Boss:
         self.body = None              
         self.velocityX = 0
         self.velocityY = 0
-        self.attack_cooldown = 0
+        self.attack_cooldown = 5
         self.throwing_apple = 0
         self.Apple = []
         # Charger l'image du boss
