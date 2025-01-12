@@ -14,24 +14,25 @@ class MainGame:
         self.player = Player()
         self.boss = Boss()
         self.clock = pygame.time.Clock()
-        self.running = True
         self.game_over = False
         self.dt = 0
+        self.restart = False
 
     def game_over_screen(self):
         font = pygame.font.Font(None, 74)
         small_font = pygame.font.Font(None, 36)
 
         # Affichage du texte Game Over
+        self.screen.fill((0, 0, 0))
         text = font.render("Game Over", True, (255, 0, 0))
         text_rect = text.get_rect(center=(640, 200))
         self.screen.blit(text, text_rect)
 
-        # # Bouton Rejouer
-        # button_text = small_font.render("Rejouer", True, (255, 255, 255))
-        # button_rect = pygame.Rect(540, 300, 200, 50)
-        # pygame.draw.rect(screen, (0, 128, 0), button_rect)
-        # screen.blit(button_text, button_text.get_rect(center=button_rect.center))
+        # Bouton Rejouer
+        button_text = small_font.render("Rejouer", True, (255, 255, 255))
+        button_rect = pygame.Rect(540, 300, 200, 50)
+        pygame.draw.rect(self.screen, (0, 128, 0), button_rect)
+        self.screen.blit(button_text, button_text.get_rect(center=button_rect.center))
         
         pygame.display.flip()
         
@@ -40,30 +41,52 @@ class MainGame:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     exit()
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    if button_rect.collidepoint(event.pos):
+                        print("j'ai cliqué")  # Vérifie si le clic est dans le bouton
+                        return True
+
+    def show_start_screen(self):
+        font = pygame.font.Font(None, 74)
+
+        # Affichage du texte d'introduction
+        self.screen.fill((0, 0, 0))
+        text = font.render("THE LEGEND OF BABAR III", True, (255, 255, 255))
+        sub_text = font.render("THE RETURN OF MOLDORM", True, (255, 255, 255))
+        text_rect = text.get_rect(center=(640, 250))
+        sub_text_rect = sub_text.get_rect(center=(640, 350))
+
+        self.screen.blit(text, text_rect)
+        self.screen.blit(sub_text, sub_text_rect)
+        
+        pygame.display.flip()
+
+        # Attendre 3 secondes avant de lancer le jeu
+        pygame.time.wait(3000)
+
+
     def StartGame(self):
-        while self.running:
+        self.show_start_screen()
+        while not self.restart:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    running = False
+                    pygame.quit()
+                    exit()
 
             if self.player.life <= 0:
-                self.game_over_screen()
-                self.player = Player()  # Réinitialiser le joueur
-                self.boss = Boss()      # Réinitialiser le boss
-                self.Map = TiledMap("./map/SnakeBattle.tmx")
-                continue  # Reprendre la boucle principale
+                self.restart = self.game_over_screen()
             
             keys = pygame.key.get_pressed()
             buttons = pygame.mouse.get_pressed()
             self.Map.draw_map(self.screen)
-            self.boss.update(self.player, self.screen, self.dt)
             self.player.update(keys, self.dt, self.screen, self.Map, buttons, self.boss)
-
+            self.boss.update(self.player, self.screen, self.dt)
             pygame.display.flip()
             self.dt = self.clock.tick(60) / 1000
 
         pygame.quit()
 
 if __name__ == "__main__":
-    game = MainGame()
-    game.StartGame()
+    while True :
+        game = MainGame()
+        game.StartGame()

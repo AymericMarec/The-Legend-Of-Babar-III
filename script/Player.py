@@ -35,7 +35,7 @@ class Player:
         self.attack_timer = 0
         self.attack_duration = 10
 
-        self.maxlife = 2
+        self.maxlife = 10
         self.life = self.maxlife
         self.is_colliding = False        
         self.sprite_width = 70
@@ -138,7 +138,7 @@ class Player:
             # if the player doesn't press any key, stop movement
             self.velocityX = 0
 
-        if keys[pygame.K_m]:
+        if keys[pygame.K_LSHIFT]:
             # Dashing
             if not self.dashing and self.dashcooldown == 0:
                 self.dashing = True
@@ -201,7 +201,7 @@ class Player:
     def check_collision(self, boss, screen):
         '''check collision with boss and apple'''
         player_rect = pygame.Rect(self.x - self.sprite_height // 2 + 5, self.y + self.sprite_height - 28, self.sprite_width, self.sprite_height)
-        boss_rect = pygame.Rect(boss.x, boss.y, boss.width, boss.height)
+        boss_rect = boss.hitbox
 
         #   Boss Collision
         if boss_rect.colliderect(player_rect):
@@ -242,7 +242,6 @@ class Player:
 
         life_bar_width = 500
         life_ratio = self.life / self.maxlife
-        print(life_ratio)
         pygame.draw.rect(screen, (0, 0, 0), (20, 20, life_bar_width, 20), border_radius=5) 
         pygame.draw.rect(screen, (0, 0, 139), (20, 20, life_bar_width * life_ratio, 20), border_radius=5)
 
