@@ -5,13 +5,12 @@ class Boss:
     def __init__(self):
         self.x = -400                
         self.y = 100                   
-        self.max_life = 10      
+        self.max_life = 5      
         self.life = self.max_life         
         self.speed = 800            
         self.width = 100              
         self.height = 400
         self.is_colliding = False
-        self.body = None              
         self.velocityX = 0
         self.velocityY = 0
         self.attack_cooldown = 5
@@ -25,7 +24,6 @@ class Boss:
 
 
     def update(self, player, screen, dt):
-        self.body = pygame.Rect(self.x, self.y, self.width, self.height)
         self.attack(dt, player)
         self.display(screen)
         self.move(dt,player)
@@ -137,15 +135,3 @@ class Boss:
             apple.update(screen)
             if(apple.IsOut() or apple.damaged == True):
                 self.Apple.remove(apple)
-
-    # def check_collision(self, player):
-    #     boss_rect = pygame.Rect(self.x, self.y, self.width, self.height)
-    #     player_rect = pygame.Rect(player.x - player.height // 2, player.y - player.height // 2, player.height, player.height)
-        
-        # if boss_rect.colliderect(player_rect):
-        #     if not self.is_colliding:
-        #         print("touché")
-        #         self.take_damage(1)
-        #         self.is_colliding = True
-        # else:
-        #     self.is_colliding = False
