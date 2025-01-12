@@ -200,10 +200,9 @@ class Player:
             
     def check_collision(self, boss, screen):
         '''check collision with boss and apple'''
-        player_rect = pygame.Rect(self.x - self.sprite_height // 2, self.y + self.sprite_height - 28, self.sprite_width, self.sprite_height- 50)
-        pygame.draw.rect(screen, "red", player_rect, 1)
-
+        player_rect = pygame.Rect(self.x - self.sprite_height // 2 + 5, self.y + self.sprite_height - 28, self.sprite_width, self.sprite_height)
         boss_rect = pygame.Rect(boss.x, boss.y, boss.width, boss.height)
+
         #   Boss Collision
         if boss_rect.colliderect(player_rect):
             if self.is_colliding == False :
