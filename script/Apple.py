@@ -12,6 +12,9 @@ class Apple:
         self.speed = 10
         self.GetDirection(player)
         self.damaged = False
+        self.image = pygame.image.load('assets/apple.png')
+        self.image = pygame.transform.scale(self.image, (60, 60))
+
 
     def GetDirection(self,player):
         '''Init velocity of the apple in the direction of the player'''
@@ -38,5 +41,6 @@ class Apple:
         if(self.x < -20 or self.x> 1600 or self.y < -40 or self.y > 1600):
             return True
         return False
+    
     def Draw(self,screen):
-        pygame.draw.circle(screen, "red", (self.x,self.y), self.height)
+        screen.blit(self.image,  (self.x,self.y))
