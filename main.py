@@ -10,7 +10,7 @@ class MainGame:
 
         self.screen = pygame.display.set_mode((1280, 640))
         pygame.display.set_caption("Snake Battle")
-        self.Map = TiledMap("./map/SnakeBattle.tmx")
+        self.Map = TiledMap("./map/Map.tmx")
         self.player = Player()
         self.boss = Boss()
         self.clock = pygame.time.Clock()
