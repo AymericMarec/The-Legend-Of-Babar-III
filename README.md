@@ -9,7 +9,7 @@
 ## Pour démarrer le jeu
 
 ```powershell
-python snake.py
+python main.py
 ```
 
 ## Comment jouer ?

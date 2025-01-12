@@ -1,7 +1,7 @@
 import pygame as pg
 from game_objects import *
 import sys
-from main import MainGame
+from MainGame import MainGame
 from time import sleep
 
 class Game:
@@ -43,9 +43,6 @@ class Game:
             if(len(self.snake.segments)> 5):
                 pg.quit()
                 sleep(2)
-                game = MainGame()
-                game.StartGame()
-
-if __name__ == "__main__":
-    game = Game()
-    game.run()
+                while True :
+                    game = MainGame()
+                    game.StartGame()
