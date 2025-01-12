@@ -1,6 +1,8 @@
 import pygame as pg
 from game_objects import *
 import sys
+from main import MainGame
+from time import sleep
 
 class Game:
     def __init__(self):
@@ -38,6 +40,11 @@ class Game:
             self.check_events()
             self.update()
             self.draw()
+            if(len(self.snake.segments)> 5):
+                pg.quit()
+                sleep(2)
+                game = MainGame()
+                game.StartGame()
 
 if __name__ == "__main__":
     game = Game()
