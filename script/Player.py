@@ -46,7 +46,6 @@ class Player:
         self.sprite_index = 0
         
 
-
     def load_sprites(self):
         sprites = {
             "idle": [],
@@ -69,6 +68,7 @@ class Player:
         '''Function called every frame in the game'''
         self.Fall(dt,Map)
         self.Move(keys,dt,button)
+        self.CheckDownfall()
         self.Collision_Detection(Map)
         self.Attack(screen,boss)
         self.check_collision(boss, screen)
@@ -78,6 +78,10 @@ class Player:
         self.x += self.velocityX
         self.y -= self.velocityY
         self.Display(screen)
+
+    def CheckDownfall(self) :
+        if self.y > 640 :
+            self.life = 0
 
     def Attack(self,screen,boss):
         if self.isAttacking:
@@ -103,11 +107,11 @@ class Player:
                     self.attack_width,
                     self.attack_range,
                 ) 
-            if attack_rect.colliderect(boss.body) and not self.Damaged:
+            if attack_rect.colliderect(boss.hitbox) and not self.Damaged:
                 self.Damaged = True
                 boss.take_damage(1)
 
-            pygame.draw.rect(screen, "yellow", attack_rect, 1)
+            pygame.draw.rect(screen, "red", attack_rect)
 
             self.attack_timer -= 1
             if self.attack_timer <= 0:

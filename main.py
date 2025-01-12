@@ -46,6 +46,50 @@ class MainGame:
                         print("j'ai cliqué")  # Vérifie si le clic est dans le bouton
                         return True
 
+    def win_screen(self):
+        font = pygame.font.Font(None, 36)
+
+        # Texte du générique
+        credits = [
+            "Félicitations !",
+            "Vous avez vaincu MOLDORM !",
+            "",
+            "Équipe de Développement :",
+            "          Moi",
+            "",
+            "THE LEGEND OF BABAR III",
+            "",
+            "(woula y'aura un 4)"
+        ]
+
+        y_offset = 640 
+
+        running = True
+        while running:
+            self.screen.fill((0, 0, 0))
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    exit()
+
+            # Affichage du texte défilant
+            for i, line in enumerate(credits):
+                text = font.render(line, True, (255, 255, 255))
+                text_rect = text.get_rect(center=(640, y_offset + i * 40))
+                self.screen.blit(text, text_rect)
+
+            # Défilement vers le haut
+            y_offset -= 1
+
+            # Si le générique est entièrement passé, terminer l'écran de victoire
+            if y_offset + len(credits) * 40 < 0:
+                running = False
+
+            pygame.display.flip()
+            self.clock.tick(60)
+
+
     def show_start_screen(self):
         font = pygame.font.Font(None, 74)
 
@@ -75,7 +119,8 @@ class MainGame:
 
             if self.player.life <= 0:
                 self.restart = self.game_over_screen()
-            
+            if self.boss.life <= 0:
+                self.win_screen()
             keys = pygame.key.get_pressed()
             buttons = pygame.mouse.get_pressed()
             self.Map.draw_map(self.screen)
